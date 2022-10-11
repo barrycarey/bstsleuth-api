@@ -1,0 +1,13 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+# Project exclude paths
+/src/api/components/watch/routes.js
+/src/api/components/watch/watchController.js
+/src/api/components/helpers.js
+/src/api/routes.js
+/src/api/server.js
+/src/config/globals.js
+/src/config/logger.js
+/src/app.js

@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model alembic_version {
+  version_num String @id @db.VarChar(32)
+}
+
+model checked_post {
+  id         Int       @id @default(autoincrement())
+  checked_at DateTime? @db.DateTime(0)
+  post_id    String?   @unique(map: "post_id") @db.VarChar(6)
+}
+
+model notification_service {
+  id                    Int                     @id @default(autoincrement())
+  url                   String                  @unique(map: "url") @db.VarChar(200)
+  owner_id              Int?
+  name                  String                  @db.VarChar(200)
+  user                  user?                   @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notification_service_ibfk_1")
+  watch_to_notification watch_to_notification[]
+
+  @@index([owner_id], map: "owner_id")
+}
+
+model patreon_tiers {
+  id                        Int    @id @default(autoincrement())
+  name                      String @db.VarChar(40)
+  max_watches               Int
+  max_notification_services Int
+  notify_delay              Int
+  tier_id                   Int?
+  user                      user[]
+}
+
+model sent_notification {
+  id                    Int       @id @default(autoincrement())
+  sent_at               DateTime? @db.DateTime(0)
+  triggered_post        String    @db.VarChar(6)
+  watch_id              Int?
+  triggered_word        String    @db.VarChar(100)
+  submission_created_at DateTime  @db.DateTime(0)
+  expected_delay        Int
+  actual_delay          Int
+  owner_id              Int?
+  watch                 watch?    @relation(fields: [watch_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sent_notification_ibfk_1")
+  user                  user?     @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sent_notification_ibfk_2")
+
+  @@index([owner_id], map: "owner_id")
+  @@index([watch_id], map: "watch_id")
+}
+
+model user {
+  id                   Int                    @id @default(autoincrement())
+  username             String                 @unique(map: "username") @db.VarChar(20)
+  created_at           DateTime?              @db.DateTime(0)
+  is_mod               Boolean?
+  patreon_tier_id      Int?
+  patreon_id           String?                @db.VarChar(30)
+  is_exempt            Boolean?
+  patreon_tiers        patreon_tiers?         @relation(fields: [patreon_tier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_ibfk_1")
+  notification_service notification_service[]
+  sent_notification    sent_notification[]
+  user_notification    user_notification[]
+  watch                watch[]
+
+  @@index([patreon_tier_id], map: "patreon_tier_id")
+}
+
+model user_notification {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime? @db.DateTime(0)
+  read       Boolean?
+  owner_id   Int?
+  message    String    @db.VarChar(300)
+  type       String    @db.VarChar(20)
+  user       user?     @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_notification_ibfk_1")
+
+  @@index([owner_id], map: "owner_id")
+}
+
+model watch {
+  id                    Int                     @id @default(autoincrement())
+  subreddit             String                  @db.VarChar(21)
+  active                Boolean?
+  created_at            DateTime?               @db.DateTime(0)
+  include               String                  @db.VarChar(500)
+  exclude               String?                 @db.VarChar(500)
+  owner_id              Int?
+  name                  String                  @db.VarChar(200)
+  user                  user?                   @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "watch_ibfk_1")
+  sent_notification     sent_notification[]
+  watch_to_notification watch_to_notification[]
+
+  @@index([subreddit], map: "idx_subreddit")
+  @@index([owner_id], map: "owner_id")
+}
+
+model watch_to_notification {
+  watch_id                Int
+  notification_service_id Int
+  id                      Int                  @id @default(autoincrement())
+  notification_service    notification_service @relation(fields: [notification_service_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "watch_to_notification_ibfk_1")
+  watch                   watch                @relation(fields: [watch_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "watch_to_notification_ibfk_2")
+
+  @@index([notification_service_id], map: "notification_service_id")
+  @@index([watch_id], map: "watch_id")
+}
