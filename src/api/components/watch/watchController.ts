@@ -6,9 +6,14 @@ export class WatchController {
     private readonly prisma = new PrismaClient()
 
     async getWatches(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-        const watches = {id: 'test'}
-        //const watches = await this.prisma.watch.findMany();
-        return res.json(watches);
+        try {
+            const watches = await this.prisma.watch.findMany();
+            return res.json(watches);
+        } catch (err: any) {
+            console.log(err)
+        }
+
+
     }
 
     async getWatchByUser(req: Request, res: Response, next: NextFunction): Promise<Response | void> {

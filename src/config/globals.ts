@@ -1,22 +1,11 @@
 // Environment variables imported from .env file
 export const env = {
-	REDIS_URL: process.env.REDIS_URL,
 	NODE_ENV: process.env.NODE_ENV || 'development',
 	NODE_PORT: process.env.NODE_PORT || process.env.PORT || 3030,
 	DOMAIN: process.env.DOMAIN,
-	SMTP: {
-		auth: {
-			pass: process.env.SMTP_PASSWORD || '',
-			user: process.env.SMTP_USERNAME || ''
-		},
-		host: process.env.SMTP_HOST || '',
-		port: process.env.SMTP_PORT || '',
-		tls: {
-			rejectUnauthorized: false
-		}
-	}
+	REDDIT_CLIENT_ID: process.env.REDDIT_CLIENT_ID,
+	REDDIT_CLIENT_SECRET: process.env.REDDIT_CLIENT_SECRET,
+	REDDIT_REDIRECT_URL: process.env.REDDIT_REDIRECT_URL
+
 };
 
-export const mails = {
-	support: 'support@my-company.com'
-};

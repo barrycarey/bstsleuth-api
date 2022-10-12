@@ -7,10 +7,14 @@ export class WatchRoutes implements IComponentRoutes<WatchController> {
     readonly controller: WatchController = new WatchController();
     readonly router: Router = Router()
 
+    constructor() {
+        this.initRoutes();
+    }
+
     initRoutes(): void {
         this.router.get(
             '/',
-            this.controller.getWatches
+            this.controller.getWatches.bind(this.controller)
         );
 
         this.router.get(
