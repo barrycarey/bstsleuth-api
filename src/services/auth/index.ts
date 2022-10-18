@@ -5,9 +5,9 @@ import { use } from 'passport';
 import {ExtractJwt, Strategy as Strategy_Jwt, StrategyOptions} from 'passport-jwt';
 import { validationResult } from 'express-validator';
 
-import { env } from '../../config/globals';
+import { env } from '../../config/globals.js';
 
-import {RedditStrat} from "./strategies/reddit";
+import {RedditStrat} from "./strategies/reddit.js";
 
 export type PassportStrategy = 'reddit';
 

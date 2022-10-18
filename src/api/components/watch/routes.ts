@@ -1,5 +1,5 @@
-import {IComponentRoutes} from "../helpers";
-import {WatchController} from "./watchController";
+import {IComponentRoutes} from "../helpers.js";
+import {WatchController} from "./watchController.js";
 import {Router} from "express";
 
 export class WatchRoutes implements IComponentRoutes<WatchController> {

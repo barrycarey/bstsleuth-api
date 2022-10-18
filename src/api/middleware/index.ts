@@ -4,10 +4,10 @@ import helmet from 'helmet';
 
 import { json, NextFunction, Request, Response, Router } from 'express';
 
-import { AuthService } from '../../services/auth';
-import { UtilityService } from '../../services/utility';
+import { AuthService } from '../../services/auth/index.js';
+import { UtilityService } from '../../services/utility.js';
 
-import { env } from '../../config/globals';
+import { env } from '../../config/globals.js';
 
 /**
  * Init Express middleware

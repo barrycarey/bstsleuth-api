@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { createLogger, format, transports } from 'winston';
-import {env} from "./globals";
+import {env} from "./globals.js";
 
 const logDir = 'logs';
 

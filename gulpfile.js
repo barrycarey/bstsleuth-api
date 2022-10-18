@@ -1,6 +1,6 @@
-const gulp = require('gulp');
-const merge = require('gulp-merge-json');
 
+import gulp from 'gulp'
+import merge from 'gulp-merge-json'
 const bases = {
 	src: 'src/',
 	dist: 'dist/',

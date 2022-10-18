@@ -2,7 +2,7 @@ import { bind } from 'decko';
 import { Handler, NextFunction, Request, Response } from 'express';
 import {authenticate, Strategy} from 'passport';
 
-import {env} from "../../../config/globals";
+import {env} from "../../../config/globals.js";
 import {PrismaClient} from "@prisma/client";
 
 import {RedditStrategy} from 'passport-reddit';

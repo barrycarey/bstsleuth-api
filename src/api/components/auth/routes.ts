@@ -1,5 +1,5 @@
-import {IComponentRoutes} from "../helpers";
-import {AuthController} from "./controller";
+import {IComponentRoutes} from "../helpers.js";
+import {AuthController} from "./controller.js";
 import {Router} from "express";
 
 export class AuthRoutes implements IComponentRoutes<AuthController> {

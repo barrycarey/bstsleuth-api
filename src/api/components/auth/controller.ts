@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {AuthService} from "../../../services/auth";
+import {AuthService} from "../../../services/auth/index.js";
 
 export class AuthController {
     private readonly authService: AuthService = new AuthService();

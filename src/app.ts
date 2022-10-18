@@ -1,4 +1,4 @@
-import {Server} from "./api/server";
+import {Server} from "./api/server.js";
 
 console.log('starting')
 // Set env variables from .env file
@@ -10,10 +10,10 @@ import express from 'express';
 import { createServer, Server as HttpServer } from 'http';
 
 
-import { env } from './config/globals';
-import { logger } from './config/logger';
+import { env } from './config/globals.js';
+import { logger } from './config/logger.js';
 import {PrismaClient} from "@prisma/client";
-import { RedditStrat} from "./services/auth/strategies/reddit";
+import { RedditStrat} from "./services/auth/strategies/reddit.js";
 
 
 console.log('Running main')

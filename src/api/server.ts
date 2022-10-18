@@ -1,6 +1,6 @@
 
 
-import { initRoutes } from './routes';
+import { initRoutes } from './routes.js';
 import express from "express";
 
 export class Server {
