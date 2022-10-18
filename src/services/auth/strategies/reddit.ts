@@ -1,11 +1,13 @@
 import { bind } from 'decko';
 import { Handler, NextFunction, Request, Response } from 'express';
-import { authenticate } from 'passport';
+import {authenticate, Strategy} from 'passport';
 
-import { BaseStrategy } from './base';
 import {env} from "../../../config/globals";
+import {PrismaClient} from "@prisma/client";
 
-const RedditStrategy = require('passport-reddit')
+import {RedditStrategy} from 'passport-reddit';
+//let RedditStrategy = await import('passport-reddit')
+
 
 /**
  * Passport JWT Authentication
@@ -14,15 +16,21 @@ const RedditStrategy = require('passport-reddit')
  * - If the signin is successfull a JWT is returned
  * - This JWT is used inside the request header for later requests
  */
-export class RedditStrat extends BaseStrategy {
+export class RedditStrat {
+
+    private readonly prisma = new PrismaClient();
+    protected _strategy: Strategy
 
     public constructor() {
-        super();
         this._strategy = new RedditStrategy({
             clientID: env.REDDIT_CLIENT_ID,
             clientSecret: env.REDDIT_CLIENT_SECRET,
             callbackURL: env.REDDIT_REDIRECT_URL
         }, this.verify);
+    }
+
+    public get strategy(): Strategy {
+        return this._strategy;
     }
 
     /**
@@ -35,7 +43,8 @@ export class RedditStrat extends BaseStrategy {
      */
     public isAuthorized(req: Request, res: Response, next: NextFunction): Handler | void {
         try {
-            authenticate('reddit', {}, (err, info) => {
+            authenticate('reddit', (err, info, user) => {
+                console.log(user)
                 // internal error
                 if (err) {
                     return next(err);
@@ -70,31 +79,21 @@ export class RedditStrat extends BaseStrategy {
         }
     }
 
-    /**
-     * Verify incoming payloads from request -> validation in isAuthorized()
-     *
-     * @param payload JWT payload
-     * @param next Express next
-     * @returns
-     */
     @bind
-    private async verify(payload: any, next: any): Promise<void> {
+    private async verify(accessToken: string, refreshToken: string, profile: any, next: any): Promise<void> {
         try {
             // pass error == null on error otherwise we get a 500 error instead of 401
 
-            const user = await this.userRepo.findOne({
-                relations: ['userRole'],
-                where: {
-                    active: true,
-                    id: payload.userID
+            const user = this.prisma.user.upsert({
+                where: {id: 0},
+                update: {},
+                create: {
+                    username: profile.name,
+                    is_mod: false,
+                    patreon_tier_id: 1,
+                    is_exempt: false
                 }
-            });
-
-            if (!user) {
-                return next(null, null);
-            }
-
-            await this.setPermissions(user);
+            })
 
             return next(null, user);
         } catch (err) {

@@ -2,15 +2,14 @@ import { bind } from 'decko';
 import { Handler, NextFunction, Request, Response } from 'express';
 import { sign, SignOptions } from 'jsonwebtoken';
 import { use } from 'passport';
-import { ExtractJwt, StrategyOptions } from 'passport-jwt';
+import {ExtractJwt, Strategy as Strategy_Jwt, StrategyOptions} from 'passport-jwt';
 import { validationResult } from 'express-validator';
 
 import { env } from '../../config/globals';
 
+import {RedditStrat} from "./strategies/reddit";
 
-import { JwtStrategy } from './strategies/jwt';
-
-export type PassportStrategy = 'jwt';
+export type PassportStrategy = 'reddit';
 
 /**
  * AuthService
@@ -25,37 +24,14 @@ export type PassportStrategy = 'jwt';
  */
 export class AuthService {
 	private defaultStrategy: PassportStrategy;
-	private jwtStrategy: JwtStrategy;
+	private redditStrategy: RedditStrat;
 
-	private readonly strategyOptions: StrategyOptions = {
-		audience: 'expressjs-api-client',
-		issuer: 'expressjs-api',
-		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-		secretOrKey: 'my-super-secret-key'
-	};
-
-	// JWT options
-	private readonly signOptions: SignOptions = {
-		audience: this.strategyOptions.audience,
-		expiresIn: '8h',
-		issuer: this.strategyOptions.issuer
-	};
-
-	public constructor(defaultStrategy: PassportStrategy = 'jwt') {
+	public constructor(defaultStrategy: PassportStrategy = 'reddit') {
 		// Setup default strategy -> use jwt if none is provided
 		this.defaultStrategy = defaultStrategy;
-		this.jwtStrategy = new JwtStrategy(this.strategyOptions);
+		this.redditStrategy = new RedditStrat();
 	}
 
-	/**
-	 * Create JWT
-	 *
-	 * @param userID Used for JWT payload
-	 * @returns Returns JWT
-	 */
-	public createToken(userID: number): string {
-		return sign({ userID }, this.strategyOptions.secretOrKey as string, this.signOptions);
-	}
 
 	/**
 	 * Middleware for verifying user permissions from acl
@@ -89,7 +65,7 @@ export class AuthService {
 	 * @returns
 	 */
 	public initStrategies(): void {
-		use('jwt', this.jwtStrategy.strategy);
+		use('reddit', this.redditStrategy.strategy);
 	}
 
 	/**
@@ -145,8 +121,8 @@ export class AuthService {
 	): Handler | void {
 		try {
 			switch (strategy) {
-				case 'jwt':
-					return this.jwtStrategy.isAuthorized(req, res, next);
+				case 'reddit':
+					return this.redditStrategy.isAuthorized(req, res, next);
 				default:
 					throw new Error(`Unknown passport strategy: ${strategy}`);
 			}
@@ -154,4 +130,6 @@ export class AuthService {
 			return next(err);
 		}
 	}
+
+
 }

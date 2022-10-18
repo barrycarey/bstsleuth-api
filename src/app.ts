@@ -13,8 +13,7 @@ import { createServer, Server as HttpServer } from 'http';
 import { env } from './config/globals';
 import { logger } from './config/logger';
 import {PrismaClient} from "@prisma/client";
-
-
+import { RedditStrat} from "./services/auth/strategies/reddit";
 
 
 console.log('Running main')
