@@ -13,9 +13,13 @@ export class AuthRoutes implements IComponentRoutes<AuthController> {
 
 
     initRoutes(): void {
-        this.router.post(
+        this.router.get(
             '/reddit/callback',
             this.controller.signinUser.bind(this)
+        )
+        this.router.get(
+            '/',
+            this.controller.loginPage.bind(this)
         )
     }
 

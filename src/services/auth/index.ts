@@ -1,7 +1,7 @@
 import { bind } from 'decko';
 import { Handler, NextFunction, Request, Response } from 'express';
 import { sign, SignOptions } from 'jsonwebtoken';
-import { use } from 'passport';
+import passport from "passport";
 import {ExtractJwt, Strategy as Strategy_Jwt, StrategyOptions} from 'passport-jwt';
 import { validationResult } from 'express-validator';
 
@@ -65,7 +65,7 @@ export class AuthService {
 	 * @returns
 	 */
 	public initStrategies(): void {
-		use('reddit', this.redditStrategy.strategy);
+		passport.use('reddit', this.redditStrategy.strategy);
 	}
 
 	/**

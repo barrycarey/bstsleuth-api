@@ -1,6 +1,6 @@
 import { bind } from 'decko';
 import { Handler, NextFunction, Request, Response } from 'express';
-import {authenticate, Strategy} from 'passport';
+import passport from "passport";
 
 import {env} from "../../../config/globals.js";
 import {PrismaClient} from "@prisma/client";
@@ -19,7 +19,7 @@ import {RedditStrategy} from 'passport-reddit';
 export class RedditStrat {
 
     private readonly prisma = new PrismaClient();
-    protected _strategy: Strategy
+    protected _strategy: passport.Strategy
 
     public constructor() {
         this._strategy = new RedditStrategy({
@@ -29,7 +29,7 @@ export class RedditStrat {
         }, this.verify);
     }
 
-    public get strategy(): Strategy {
+    public get strategy(): passport.Strategy {
         return this._strategy;
     }
 
@@ -43,7 +43,7 @@ export class RedditStrat {
      */
     public isAuthorized(req: Request, res: Response, next: NextFunction): Handler | void {
         try {
-            authenticate('reddit', (err, info, user) => {
+            passport.authenticate('reddit', (err, info, user) => {
                 console.log(user)
                 // internal error
                 if (err) {
