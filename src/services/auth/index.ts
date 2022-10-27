@@ -77,6 +77,7 @@ export class AuthService {
 	@bind
 	public isAuthorized(strategy?: PassportStrategy): Handler {
 		return (req: Request, res: Response, next: NextFunction) => {
+			console.log('Doing isAuthorized')
 			try {
 				if (env.NODE_ENV !== 'test') {
 					// if no strategy is provided use default strategy

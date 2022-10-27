@@ -19,7 +19,7 @@ export class WatchRoutes implements IComponentRoutes<WatchController> {
         this.router.get(
             '/',
             this.authSerivce.isAuthorized(),
-            this.controller.getWatches.bind(this.controller)
+            this.controller.getWatches
         );
 
         this.router.get(

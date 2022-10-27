@@ -3,6 +3,7 @@
 import { initRoutes } from './routes.js';
 import express from "express";
 import expressSession from 'express-session'
+import passport from "passport";
 
 export class Server {
     private readonly _app: express.Application = express();
@@ -13,6 +14,15 @@ export class Server {
             resave: true,
             saveUninitialized: true
         }))
+        passport.serializeUser(function(user, done) {
+            done(null, user)
+        })
+
+        passport.deserializeUser(function(obj: any, done) {
+            done(null, obj)
+        })
+        this._app.use(passport.initialize())
+        this._app.use(passport.session())
         console.log('Creating routes')
         initRoutes(this._app);
     }

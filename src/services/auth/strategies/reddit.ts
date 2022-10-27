@@ -41,26 +41,14 @@ export class RedditStrat {
      * @param next Express next
      * @returns Returns if user is authorized
      */
-    public isAuthorized(req: Request, res: Response, next: NextFunction): Handler | void {
+
+    isAuthorized(req: Request, res: Response, next: NextFunction): Handler | void {
         try {
-            passport.authenticate('reddit', (err, info, user) => {
+            passport.authenticate('reddit', (err, user) => {
                 console.log(user)
                 // internal error
                 if (err) {
                     return next(err);
-                }
-                if (info) {
-                    switch (info.message) {
-                        case 'No auth token':
-                            return res.status(401).json({
-                                error: 'No jwt provided!'
-                            });
-
-                        case 'jwt expired':
-                            return res.status(401).json({
-                                error: 'Jwt expired!'
-                            });
-                    }
                 }
 
                 if (!user) {
@@ -71,6 +59,7 @@ export class RedditStrat {
 
                 // success - store user in req scope
                 req.user = user;
+
 
                 return next();
             })(req, res, next);
@@ -84,8 +73,8 @@ export class RedditStrat {
         try {
             // pass error == null on error otherwise we get a 500 error instead of 401
 
-            const user = this.prisma.user.upsert({
-                where: {id: 0},
+            const user = await this.prisma.user.upsert({
+                where: {username: profile.name},
                 update: {},
                 create: {
                     username: profile.name,
